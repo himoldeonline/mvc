@@ -11,11 +11,6 @@ br();
 echo 'Query String: ' . $_SERVER['QUERY_STRING'];
 br();
 if (array_key_exists('REDIRECT_QUERY_STRING', $_SERVER)) {
-
-  if ($_SERVER['REDIRECT_QUERY_STRING'] == 'hello') {
-    echo 'HELLO';
-  }
-
   echo 'Redirect Query String: ' . $_SERVER['REDIRECT_QUERY_STRING'];
 }
 else {
