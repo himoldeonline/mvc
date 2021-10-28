@@ -35,8 +35,3 @@
   #   Options +FollowSymLinks
 
 </IfModule>
-
-<FilesMatch \.php>
-  # USE PHP 8
-    SetHandler "proxy:unix:/var/run/php/php8.0-fpm.sock|fcgi://localhost/"
-</FilesMatch>
