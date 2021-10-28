@@ -2,4 +2,5 @@
 namespace mvc;
 
 
-echo  "Hello bip";
+
+(new Application()).run();
