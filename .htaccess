@@ -1,6 +1,7 @@
 <IfModule mod_rewrite.c>
 
-  # by emilbratt
+  # @author emilbratt
+  # @author ringis
 
   # ABOUT
   #   for an MVC framework, we can utilize mod_rewrite for URL`s
@@ -11,12 +12,12 @@
     RewriteEngine On
 
   # REWRITE CONDITION
-  #   if files or folder exists, ignore redirect
+  #   ! -f = if no file
+  #   ! -d = if no directory
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
 
-
-    # REWRITE RULE
+  # REWRITE RULE
   #   send all requests to index.php and preserve URI in the $1 variable
   #   NOTE: this will also redirect what would cause 404 responses for
   #   unresolved paths and files in the URL
@@ -34,3 +35,8 @@
   #   Options +FollowSymLinks
 
 </IfModule>
+
+<FilesMatch \.php>
+  # USE PHP 8
+    SetHandler "proxy:unix:/var/run/php/php8.0-fpm.sock|fcgi://localhost/"
+</FilesMatch>
