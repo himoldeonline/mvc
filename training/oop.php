@@ -1,6 +1,5 @@
-
 <?php
-
+namespace mvc\training;
 
 interface Gradeable{
 
