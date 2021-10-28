@@ -12,15 +12,14 @@
     RewriteEngine On
 
   # REWRITE CONDITION
+  #   send all requests to index.php if no file or dir exist
   #   ! -f = if no file
   #   ! -d = if no directory
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
 
   # REWRITE RULE
-  #   send all requests to index.php and preserve URI in the $1 variable
-  #   NOTE: this will also redirect what would cause 404 responses for
-  #   unresolved paths and files in the URL
+
     RewriteRule    ^(.*)$    index.php?$1    [QSA,L]
 
   # SYNTAX
