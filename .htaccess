@@ -10,7 +10,13 @@
   #   if not already enabled, enable rewriting of url
     RewriteEngine On
 
-  # REWRITE RULE
+  # REWRITE CONDITION
+  #   if files or folder exists, ignore redirect
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+
+    # REWRITE RULE
   #   send all requests to index.php and preserve URI in the $1 variable
   #   NOTE: this will also redirect what would cause 404 responses for
   #   unresolved paths and files in the URL
