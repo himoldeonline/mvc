@@ -4,6 +4,8 @@ function br () {
 }
 echo 'This is the controller for the MVC';
 br();
+echo 'PHP Version: ' . phpversion();
+br();
 echo 'Script Location: ' . __FILE__;
 br();
 echo 'Request URI: ' . $_SERVER['REQUEST_URI'];
