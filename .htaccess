@@ -15,8 +15,9 @@
   #   send all requests to index.php if no file or dir exist
   #   ! -f = if no file
   #   ! -d = if no directory
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
+  #  RewriteCond %{REQUEST_FILENAME} !-f
+  #  RewriteCond %{REQUEST_FILENAME} !-d
+    ### commented out @ 20211031, forcing $_SERVER['REDIRECT_URL'] for every request used in ./mvc/app/lib/Router.php
 
   # REWRITE RULE
     RewriteRule    ^(.*)$    index.php?$1    [QSA,L]
