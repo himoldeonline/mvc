@@ -1,4 +1,5 @@
 <?php
+
 function br () {
   echo '<br>';
 }
@@ -16,3 +17,4 @@ if (array_key_exists('REDIRECT_QUERY_STRING', $_SERVER)) {
 else {
   echo 'Redirect Query String: None';
 }
+
