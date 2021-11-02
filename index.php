@@ -1,6 +1,9 @@
 <?php
-namespace mvc;
 
 
+#require "application.php";
 
-(new Application()).run();
+
+echo "hei";
+
+#(new mvc\Application())->run();

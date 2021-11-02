@@ -9,7 +9,7 @@ namespace mvc;
 
 
 /**
- * Class Application
+ * Class application
  *
  * @author  Bård-Inge Pettersen <bard.i.a.pettersen@himolde.no>
  * @package mvc
@@ -19,13 +19,13 @@ class Application
 
     public function __construct()
     {
-        $router = new ROUTER();
+
     }
 
 
     function run()
     {
-
+            echo "Hello Bip";
             //resolve, men husk må registrere rutene en plass
     }
 }
