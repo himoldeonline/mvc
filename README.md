@@ -1,9 +1,9 @@
 # About
-An MVC project from scratch with PHP
+* An MVC project from scratch with PHP
 
 # Setup (for testing with the example_site)
-Set document root to ../example_site/web
-Enable apache re_write module
+* Set document root to ../example_site/web
+* Enable apache re_write module
 
 ## Directories Summary
 <pre>
