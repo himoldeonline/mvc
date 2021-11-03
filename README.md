@@ -1,7 +1,7 @@
-# About
+## About
 * An MVC project from scratch with PHP
 
-# Setup (for testing with the example_site)
+## Setup (for testing with the example_site)
 * Set document root to ../example_site/web
 * Enable apache re_write module
 
