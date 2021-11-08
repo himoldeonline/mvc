@@ -1,6 +1,7 @@
 <IfModule mod_rewrite.c>
 
-  # by emilbratt
+  # @author emilbratt
+  # @author ringis
 
   # ABOUT
   #   for an MVC framework, we can utilize mod_rewrite for URL`s
@@ -11,15 +12,14 @@
     RewriteEngine On
 
   # REWRITE CONDITION
-  #   if files or folder exists, ignore redirect
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
+  #   send all requests to index.php if no file or dir exist
+  #   ! -f = if no file
+  #   ! -d = if no directory
+  #  RewriteCond %{REQUEST_FILENAME} !-f
+  #  RewriteCond %{REQUEST_FILENAME} !-d
+    ### commented out @ 20211031, forcing $_SERVER['REDIRECT_URL'] for every request used in ./mvc/app/lib/Router.php
 
-
-    # REWRITE RULE
-  #   send all requests to index.php and preserve URI in the $1 variable
-  #   NOTE: this will also redirect what would cause 404 responses for
-  #   unresolved paths and files in the URL
+  # REWRITE RULE
     RewriteRule    ^(.*)$    index.php?$1    [QSA,L]
 
   # SYNTAX
