@@ -1,7 +1,6 @@
 <?php
 
-require_once  '../controllers/siteController.php';
+require_once  '../../framework/web/UrlManager.php';
 
-$hei = new SiteController;
-$hei->index();
-$hei->hello();
+$Route = new UrlManager;
+
