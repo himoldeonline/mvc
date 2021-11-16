@@ -25,6 +25,7 @@ ARR_SUPPORTED_FILE_EXTENSIONS=(
   bash,sh
   perl,pl
   ruby,rb
+  php,php
 )
 
 function parse_script_extension () {
