@@ -7,7 +7,7 @@ import os
 PATH_TOOLS = os.path.dirname(os.path.abspath(__file__))
 PATH_CONFIG = os.path.join(PATH_TOOLS, 'config')
 PATH_YML_CONFIG = os.path.join(PATH_CONFIG, 'config.yml')
-PATH_JSON_CONFIG = os.path.join(PATH_CONFIG, 'config.jsons')
+PATH_JSON_CONFIG = os.path.join(PATH_CONFIG, 'config.json')
 
 if os.path.isfile(PATH_YML_CONFIG):
     import yaml
