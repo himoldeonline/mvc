@@ -1,0 +1,244 @@
+#!/usr/bin/env bash
+#
+# Author:
+#   Emil Bratt Børsting
+#
+# Description:
+#   automatically re-run scripts to make developing faster
+#
+# How-to-use:
+#   cd into the scripts path and do: $ ./myautoloop
+#   ..optionally add this to PATH for use everywhere
+#
+
+### set your custom values here ###
+declare script # file name of script to run
+declare script_path # the full path to the script
+declare script_path_update # when changed, re-run of script (this can be other file)
+declare arguments # if script takes arguments
+declare exit_code # store return code
+declare halt_on_fail # handle wether failed run or not
+
+ARR_SUPPORTED_FILE_EXTENSIONS=(
+  # <interpreter>,<extension>
+  python3,py
+  bash,sh
+  perl,pl
+  ruby,rb
+)
+
+function parse_script_extension () {
+
+  # if shebang on line 1 is found, assume interpreter is set
+  head -n 1 $script_path | grep -q '#!' && return 0
+
+  # if extension is found, assign interpreter
+  for row in "${ARR_SUPPORTED_FILE_EXTENSIONS[@]}"; do
+    found_interpreter=$(echo $row | cut -d ',' -f1)
+    found_extension=$(echo $row | cut -d ',' -f2)
+    found_len_extension=${#found_extension}
+
+    # extract extension from absolute path to script
+    extenssion=${script_path: -$found_len_extension}
+
+    if [[ $extenssion == $found_extension ]]; then
+      # add interpreter as part of the absoulute script path
+      script_path="$found_interpreter $script_path"
+      return 0
+    fi
+
+  done
+
+  # if still here, assume its a binary
+  return 0
+}
+
+function multi_echo () {
+  # takes an arbitrary amount of args as strings to be printed on separate lines
+  echo -e '----------------------------------------------'
+  for optn in "$@"
+  do
+    echo "$optn"
+  done
+  echo -e '----------------------------------------------'
+}
+
+function list_scripts () {
+  echo 'pass'
+}
+
+function print_head () {
+  clear
+  echo "Running: $script"
+  echo "Mode: $banner_mode_msg"
+  echo "If script fails: $banner_halt_msg"
+  echo '----Start----'
+  echo
+}
+
+function print_tail () {
+  echo
+  echo '-----End-----'
+  echo $footer_msg
+}
+
+function execute_script () {
+
+  print_head
+  # running the script happens here:
+  ######################################
+  eval "$script_path $arguments"; exit_code=$?
+  ######################################
+  print_tail
+
+  if [[ $exit_code != 0 ]] &&
+  [[ $halt_on_fail == 1 ]]; then
+      echo ''
+      echo "$script ended with code: $exit_code"
+      echo ''
+      echo 'Press Enter to continue'
+      read
+      return 1
+  fi
+
+  return 0
+}
+
+
+### entrypoint ###
+cwd=$(pwd)
+
+echo 'Chose Mode'
+multi_echo \
+  '1. Single run' \
+  '2. Re-run automatically' \
+  '3. Re-run manually' \
+  '4. Re-run every x seconds' \
+  '0. Exit'
+
+printf 'Type: '; read repeat_mode
+
+if [[ $repeat_mode == 1 ]]; then
+  banner_mode_msg='Single run'
+  footer_msg='Press Enter to quit'
+elif [[ $repeat_mode == 2 ]]; then
+  banner_mode_msg="Re-run automatically"
+  footer_msg='CTRL-C to quit'
+elif [[ $repeat_mode == 3 ]]; then
+  banner_mode_msg='Re-run manually'
+  footer_msg='Enter to re-run / CTRL-C to quit'
+elif [[ $repeat_mode == 4 ]]; then
+  printf "Sleep seconds: "; read sleep_timer
+  banner_mode_msg="Re-run every $sleep_timer seconds"
+  footer_msg='CTRL-C to quit'
+else
+  exit
+fi
+
+
+echo 'Halt and prompt Enter on failed runs?'
+multi_echo \
+  '1. Yes [default]' \
+  '2. No' \
+
+printf 'Type: '; read opt
+
+if [[ $opt == 2 ]]; then
+  banner_halt_msg='Continue'
+  halt_on_fail=0
+else
+  banner_halt_msg='Halt'
+  halt_on_fail=1
+
+fi
+
+
+if [[ $# -eq 0 ]]; then
+  printf 'Script name: '; read script
+  printf 'Arguments (leave empty for none): '; read arguments
+else
+  script=$1
+fi
+script_path="$cwd/$script"
+
+
+# check if script exist
+if [[ ! -f $script_path ]]; then
+  echo "$script_path does not exist"
+  exit 1
+fi
+# if script has no content, exit
+if [[ ! -s $script_path ]]; then
+  echo "$script_path has 0 bytes"
+  exit 1
+fi
+if [[ ! -x $script_path ]]; then
+  echo "Setting executable bit on $script_path"
+  chmod +x $script_path || exit 1
+  sleep 2
+fi
+
+script_path_update=$script_path
+parse_script_extension
+
+if [[ $repeat_mode == 1 ]]; then
+
+  execute_script
+  read
+
+elif [[ $repeat_mode == 2 ]]; then
+
+  echo 'Assign the script for which to check'
+  multi_echo \
+    '1. Same script [default] ' \
+    '2. Another script' \
+    '0. Exit'
+
+  printf 'Type: '; read opt
+  if [[ $opt == 2 ]]; then
+    echo 'Script: '; read script_path_update
+    if [[ ! -f $script_path_update ]]; then
+      script_path_update="$cwd/$script_path_update"
+      if [[ ! -f $script_path_update ]]; then
+        echo "$script_path_update does not exist"
+        exit 1
+      fi
+    fi
+  fi
+
+  while [[ true ]]; do
+
+    script_cksum_new=$(cksum $script_path_update | cut -d ' ' -f1)
+    script_age_new=$(date -r $script_path_update +%s)
+
+    # run only if script has changed (timestamp and checksum)
+    # NOTE: will always run on first iteration
+    if [[ $script_age_new -gt $script_age_old ]] &&
+       [[ $script_cksum_new != $script_cksum_old ]]
+    then
+        script_age_old=$(date -r $script_path_update +%s) &&
+        script_cksum_old=$(cksum $script_path_update | cut -d ' ' -f1)
+        execute_script
+    else
+      time=$((unix_epoch-script_age_old))
+      echo -ne " Exit code: $exit_code | $script_path_update is unchanged for $time seconds\r";
+
+    fi
+    sleep 1
+    unix_epoch=$(date +%s)
+
+  done
+
+elif [[ $repeat_mode == 3 ]]; then
+
+  while [[ true ]]; do
+    execute_script && read
+  done
+
+elif [[ $repeat_mode == 4 ]]; then
+
+  while [[ true ]]; do
+    execute_script && sleep $sleep_timer
+  done
+
+fi
