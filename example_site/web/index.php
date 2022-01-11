@@ -2,6 +2,6 @@
 
 require_once  '../controllers/siteController.php';
 
-$hei = new SiteController;
-$hei->index();
-$hei->hello();
+$app = new SiteController;
+$app->index();
+$app->hello();
